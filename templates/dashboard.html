@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block body %}
+    <!-- Small modal -->
+<button class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Logout</button>
+
+<div class="modal bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header"><h4>Logout <i class="fa fa-lock"></i></h4></div>
+      <div class="modal-body"><i class="fa fa-question-circle"></i> Are you sure you want to log-off?</div>
+      <div class="modal-footer"><a href="/logout" class="btn btn-primary btn-block">Logout</a></div>
+    </div>
+  </div>
+</div>
+{% if flag == True %}
+    <div class="alert alert-success" id="success-alert">
+        <button type="button" class="close" data-dismiss="alert">x</button>
+        <strong>Success!</strong>
+        Logged in successfully.
+    </div>
+    <script>
+        window.setTimeout(function() 
+        {
+            $(".alert").fadeTo(500, 0).slideUp(500, function()
+            {
+                $(this).remove(); 
+            });
+        }, 2000);
+    </script>
+{% endif %}
+{% endblock body %}
