@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div class="container-sm">
+    <div class="row justify-content-md-center">
+        <form class="border border-light p-5" method="POST" action="/new_post">
+
+            <p class="h4 mb-4 text-center">New blog</p>
+
+            <label for="textInput">Title</label>
+            <input type="text" name="title" id="textInput" class="form-control mb-4" placeholder="Title here...">
+        
+            <label for="textarea">Content</label>
+            <textarea id="textarea" name="content" class="form-control mb-4" placeholder="Content.." rows="15" cols="100"></textarea>
+
+
+            <button class="btn btn-info btn-block my-4" type="submit">Post</button>
+
+        </form>
+    </div>
+</div>
+{% endblock body %}

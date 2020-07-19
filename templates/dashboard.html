@@ -9,7 +9,14 @@
     {% endif %}
   <div class="container">
     <div class="row">
-      <div class="col-12" style="margin-top: 20px;"><span style="font-size: 25px;">Welcome {{ session['user'].capitalize() }}</span><input type="button" class="btn btn-warning float-right" data-toggle="modal" data-target="#logout" value="Log out"></div>
+      <div class="col-12" style="margin-top: 20px;">
+        <span style="font-size: 25px;">Welcome {{ session['user'].capitalize() }}</span>
+        <input type="button" class="btn btn-warning float-right" data-toggle="modal" data-target="#logout" value="Log out">
+        <a href="/new_post"><input type="button" class="btn btn-primary float-right" style="margin-right: 10px;" value="New post"></a>
+      </div>
+    </div>
+    <div class="col-12" style="margin-top: 15px;">
+      <span style="font-size: 17px;">Your posts...</span>
     </div>
     
     <!-- Logout modal -->
@@ -17,7 +24,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Log out</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -48,7 +55,7 @@
           <th scope="row">{{ post.p_no }}</th>
           <td>{{ post.p_title }}</td>
           <td>{{ post.p_content[:70] }}...</td>
-          <td><button type="button" class="btn btn-outline-primary">Edit</button>  <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deletemodal">Delete</button></td>
+          <td><a href="/edit/{{ post.p_slug }}"><button type="button" class="btn btn-outline-primary">Edit</button></a>  <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deletemodal">Delete</button></td>
         </tr>
         {% endfor %}
       </tbody>

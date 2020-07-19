@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect,flash, url_for,session
 from flask_sqlalchemy import SQLAlchemy
+import datetime
 
 
 app = Flask(__name__)
@@ -24,6 +25,13 @@ class Post(db.Model):
     p_date = db.Column(db.String)
     p_time = db.Column(db.String)
 
+def slug_maker(title):
+    title = title.lower()
+    arr = title.split()
+    return "-".join(arr)
+
+def get_time(today):
+    return str(today).split()[1].split(".")[0]
 
 @app.route("/")
 def home():
@@ -33,6 +41,44 @@ def home():
 @app.route("/about")
 def about():
     return render_template("about.html")
+
+@app.route('/new_post', methods = ['GET', 'POST'])
+def post_new():
+    if request.method == 'POST':
+        post_title = request.form.get('title')
+        post_slug = slug_maker(post_title)
+        post_image = ""
+        post_content = request.form.get('content')
+        post_by = session['user'].capitalize()
+        post_date = datetime.date.today()
+        post_time = get_time(datetime.datetime.now())
+        entry = Post(p_slug = post_slug, p_title = post_title, p_image = post_image, p_content = post_content, p_by = post_by, p_date = post_date, p_time = post_time)
+        db.session.add(entry)
+        db.session.commit()
+        return redirect("/dashboard")
+    return render_template("new_post.html")
+    
+
+@app.route("/update/<string:slug>", methods = ['GET','POST'])
+def update(slug):
+    if request.method == 'POST':
+        post = Post.query.filter_by(p_slug = slug).first()
+        post.p_slug = slug_maker(request.form.get('title'))
+        post.p_title = request.form.get('title')
+        post.p_image = post.p_image
+        post.p_content = request.form.get('content')
+        post.p_by = post.p_by
+        post.p_date = post.p_date
+        post.p_time = post.p_time
+        db.session.commit()
+        return redirect("/dashboard")
+    return redirect('/dashboard')
+        
+
+@app.route("/edit/<string:slug>")
+def edit(slug):
+    post = Post.query.filter_by(p_slug = slug).first()
+    return render_template("edit.html", post = post)
 
 @app.route("/post/<string:slug>")
 def post_content(slug):
