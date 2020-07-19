@@ -1,0 +1,28 @@
+{% extends 'layout.html'%}
+
+{% block body %}
+<div class="container my-5 z-depth-1">
+
+
+    <!--Section: Content-->
+    <section class="dark-grey-text">
+  
+      <div class="row pr-lg-5">
+        <div class="col-md-15 d-flex align-items-center">
+          <div>
+            
+            <p><span style="font-weight: bold; font-size: 40px;">{{ post.p_title }}</span><span style="font-variant: small; font-style: italic;">   by {{ post.p_by }}</span></p>
+            <hr>
+  
+              <p>{{ post.p_content }}</p>
+  
+          </div>
+        </div>
+      </div>
+  
+    </section>
+    <!--Section: Content-->
+  
+  
+  </div>
+  {% endblock body %}

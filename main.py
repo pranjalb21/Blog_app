@@ -34,6 +34,14 @@ def home():
 def about():
     return render_template("about.html")
 
+@app.route("/post/<string:slug>")
+def post_content(slug):
+    if not slug == "": 
+        post = Post.query.filter_by(p_slug = slug).first()
+        return render_template("post.html", post = post)
+    else:
+        return redirect("/")
+
 @app.route("/logout")
 def logout():
     session.pop('user')
