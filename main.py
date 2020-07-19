@@ -50,14 +50,15 @@ def logout():
 @app.route("/dashboard", methods = ['GET', 'POST'])
 def dashboard():
     flag = False
+    posts = Post.query.filter_by().all()
     if 'user' in session and session['user'] == 'pranjal':
-        return render_template('dashboard.html', flag = False)
+        return render_template('dashboard.html', flag = False, posts = posts)
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
         if username == "pranjal" and password == "pranjal":
             session['user'] = username
-            return render_template('dashboard.html', flag = True)
+            return render_template('dashboard.html', flag = True, posts = posts)
         else:
             flash("Please enter a correct username or password", "warning")
             return redirect('/dashboard')

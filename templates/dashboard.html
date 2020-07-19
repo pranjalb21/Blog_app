@@ -1,23 +1,84 @@
 {% extends 'layout.html' %}
 {% block body %}
-    <!-- Small modal -->
-<button class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Logout</button>
+    {% if flag == True %}
+      <div class="alert alert-success" id="success-alert">
+          <button type="button" class="close" data-dismiss="alert">x</button>
+          <strong>Success!</strong>
+          Logged in successfully.
+      </div>
+    {% endif %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12" style="margin-top: 20px;"><span style="font-size: 25px;">Welcome {{ session['user'].capitalize() }}</span><input type="button" class="btn btn-warning float-right" data-toggle="modal" data-target="#logout" value="Log out"></div>
+    </div>
+    
+    <!-- Logout modal -->
+    <div class="modal fade" id="logout" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              Do you want to logout?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <a  href="/logout"><button type="button" class="btn btn-primary">Logout</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Post tables-->
+    <table class="table" style="margin-top: 20px;">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Serial no.</th>
+          <th scope="col">Post title</th>
+          <th scope="col">Post content</th>
+          <th scope="col">Operations</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in posts %}
+        <tr>
+          <th scope="row">{{ post.p_no }}</th>
+          <td>{{ post.p_title }}</td>
+          <td>{{ post.p_content[:70] }}...</td>
+          <td><button type="button" class="btn btn-outline-primary">Edit</button>  <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deletemodal">Delete</button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-<div class="modal bs-example-modal-sm" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header"><h4>Logout <i class="fa fa-lock"></i></h4></div>
-      <div class="modal-body"><i class="fa fa-question-circle"></i> Are you sure you want to log-off?</div>
-      <div class="modal-footer"><a href="/logout" class="btn btn-primary btn-block">Logout</a></div>
-    </div>
-  </div>
 </div>
-{% if flag == True %}
-    <div class="alert alert-success" id="success-alert">
-        <button type="button" class="close" data-dismiss="alert">x</button>
-        <strong>Success!</strong>
-        Logged in successfully.
-    </div>
+
+    <!-- Delete modal -->
+    <div class="modal fade" id="deletemodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Delete post</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Do you want to delete this post?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>  
+
+        
+        
     <script>
         window.setTimeout(function() 
         {
@@ -27,5 +88,4 @@
             });
         }, 2000);
     </script>
-{% endif %}
 {% endblock body %}
