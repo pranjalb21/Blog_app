@@ -15,6 +15,7 @@ class Contact(db.Model):
     c_email = db.Column(db.String(50))
     c_msg = db.Column(db.String(250))
 
+
 class Post(db.Model):
     p_no = db.Column(db.Integer, primary_key = True)
     p_slug = db.Column(db.String(59))
@@ -25,22 +26,55 @@ class Post(db.Model):
     p_date = db.Column(db.String)
     p_time = db.Column(db.String)
 
+
+class User(db.Model):
+    sl_no = db.Column(db.Integer, primary_key = True)
+    f_name = db.Column(db.String(20))
+    l_name = db.Column(db.String(20))
+    email = db.Column(db.String(50))
+    phone = db.Column(db.String(10))
+    u_name = db.Column(db.String(15))
+    password = db.Column(db.String(15))
+    dob = db.Column(db.String)
+
 def slug_maker(title):
     title = title.lower()
     arr = title.split()
     return "-".join(arr)
 
+
 def get_time(today):
     return str(today).split()[1].split(".")[0]
+
 
 @app.route("/")
 def home():
     posts = Post.query.filter_by().all()
     return render_template("index.html", posts = posts)
 
+
+@app.route('/signup', methods = ['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        fname = request.form.get('fname')
+        lname = request.form.get('lname')
+        email = request.form.get('email')
+        phone = request.form.get('phone')
+        u_name = request.form.get('uid')
+        pas = request.form.get('pass')
+        dob = request.form.get('dob')
+        entry = User(f_name = fname, l_name = lname, email = email, phone = phone, u_name = u_name, password = pas, dob = dob)
+        db.session.add(entry)
+        db.session.commit()
+        flash('You registration has been completes. Please sign in', 'success')
+        return render_template("login.html")
+    return render_template("signup.html")
+
+
 @app.route("/about")
 def about():
     return render_template("about.html")
+
 
 @app.route('/new_post', methods = ['GET', 'POST'])
 def post_new():
@@ -55,6 +89,7 @@ def post_new():
         entry = Post(p_slug = post_slug, p_title = post_title, p_image = post_image, p_content = post_content, p_by = post_by, p_date = post_date, p_time = post_time)
         db.session.add(entry)
         db.session.commit()
+        flash("Your post has been published", "success")
         return redirect("/dashboard")
     return render_template("new_post.html")
     
@@ -71,6 +106,7 @@ def update(slug):
         post.p_date = post.p_date
         post.p_time = post.p_time
         db.session.commit()
+        flash("Your post has been updated", "success")
         return redirect("/dashboard")
     return redirect('/dashboard')
         
@@ -80,6 +116,7 @@ def edit(slug):
     post = Post.query.filter_by(p_slug = slug).first()
     return render_template("edit.html", post = post)
 
+
 @app.route("/post/<string:slug>")
 def post_content(slug):
     if not slug == "": 
@@ -88,10 +125,21 @@ def post_content(slug):
     else:
         return redirect("/")
 
+
 @app.route("/logout")
 def logout():
     session.pop('user')
     return redirect("/dashboard")
+
+
+@app.route('/delete/<string:slug>')
+def delete(slug):
+    post = Post.query.filter_by(p_slug = slug).first()
+    db.session.delete(post)
+    db.session.commit()
+    flash('The post has been deleted', 'danger')
+    return redirect("/dashboard")
+
 
 @app.route("/dashboard", methods = ['GET', 'POST'])
 def dashboard():
@@ -109,6 +157,7 @@ def dashboard():
             flash("Please enter a correct username or password", "warning")
             return redirect('/dashboard')
     return render_template('login.html')
+
 
 @app.route("/contact", methods = ['GET', 'POST'])
 def contact():

@@ -1,0 +1,39 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="container-sm">
+        <div class="row justify-content-md-center">
+            <form class="border border-light p-5" action="/signup" method="POST" style="background-color: #F8F9FA">
+
+              <p class="h4 mb-4 text-center">Sign up</p>
+                <label for="fname">First name</label>
+                <input type="text" id="fname" maxlength="20" name="fname" class="form-control mb-4" placeholder="First name" required>
+
+                <label for="lname">Last name</label>
+                <input type="text" id="lname" maxlength="20" name="lname" class="form-control mb-4" placeholder="Last name" required>
+
+                <label for="uid">User id</label>
+                <input type="text" id="uid" maxlength="15" name="uid" class="form-control mb-4" placeholder="User id" required>
+
+                <label for="dob">Date of birth</label>
+                <input type="date" name="dob" id="dob" required><br><br>
+
+                <label for="phone">Mobile number</label>
+                <input type="number" name="phone" required pattern="[6789][0-9]{9}" id="phone" class="form-control mb-4" placeholder="Mobile number" maxlength="10" size="10">
+
+                <label for="email">Email address</label>
+                <input type="email" name="email" maxlength="50" id="email" required class="form-control mb-4" placeholder="Email address" size="40">
+
+                <label for="password">Password</label>
+                <input type="password" id="password" maxlength="15" name="pass" required class="form-control mb-4" placeholder="Password">
+
+                <label for="con_password">Confirm password</label>
+                <input type="password" id="con_password" name="conf_pass" required class="form-control mb-4" placeholder="Confirm password">
+                <button class="btn btn-info btn-block my-4" type="submit">Sign up</button>
+            </form>
+        </div>
+</div>
+<script>
+
+</script>
+{% endblock body %}
