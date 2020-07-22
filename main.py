@@ -63,6 +63,15 @@ def signup():
         u_name = request.form.get('uid')
         pas = request.form.get('pass')
         dob = request.form.get('dob')
+        if User.query.filter_by(u_name = u_name).first():
+            flash('User name is already registered please sign in','warning')
+            return redirect('/dashboard')
+        if User.query.filter_by(email = email).first():
+            flash('This email is already registered please sign in','warning')
+            return redirect('/dashboard')
+        if User.query.filter_by(phone = phone).first():
+            flash('This phone is already registered please sign in','warning')
+            return redirect('/dashboard')
         entry = User(f_name = fname, l_name = lname, email = email, phone = phone, u_name = u_name, password = pas, dob = dob)
         db.session.add(entry)
         db.session.commit()

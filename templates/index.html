@@ -8,6 +8,7 @@
         <h1 class="my-4">Blogs</h1>
         {% for post in posts %}
         <!-- Blog Post -->
+        {% if post %}
         <div class="card mb-4">
           <img class="card-img-top" src="#" alt="Card image cap">
           <div class="card-body">
@@ -21,6 +22,9 @@
             <a href="">{{ post.p_by }}</a>
           </div>
         </div>
+        {% else %}
+            No posts
+        {% endif %}
         {% endfor %}
 
         <!-- Pagination -->
