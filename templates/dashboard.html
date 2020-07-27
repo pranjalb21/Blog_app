@@ -1,15 +1,15 @@
 {% extends 'layout.html' %}
 {% block body %}
-    {% if flag %}
-      <div class="alert alert-success" id="success-alert">
-          <button type="button" class="close" data-dismiss="alert">x</button>
-          <strong>Success!</strong>
-          Logged in successfully.
-      </div>
-    {% endif %}
+    
     
     
   <div class="container">
+    {% if flag %}
+    <ul class=flashes>
+      <div id="flash" class="alert alert-success" role="alert" style="text-align: center;">
+        Congratulations! You are logged in now.
+      </div>
+    {% endif %}
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <ul class=flashes>
@@ -23,7 +23,7 @@
     {% endwith %}
     <div class="row">
       <div class="col-12" style="margin-top: 20px;">
-        <span style="font-size: 25px;">Welcome {{ session['user'].capitalize() }}</span>
+        <span style="font-size: 25px;">Welcome {{ user[0].f_name.capitalize() }}</span>
         <input type="button" class="btn btn-warning float-right" data-toggle="modal" data-target="#logout" value="Log out">
         <a href="/new_post"><input type="button" class="btn btn-primary float-right" style="margin-right: 10px;" value="New post"></a>
       </div>
@@ -72,9 +72,10 @@
             </tr>
           </thead>
           <tbody>
+            {% set count = 1 %}
             {% for post in posts %}
             <tr>
-              <th scope="row">{{ post.p_no }}</th>
+              <th scope="row">{{ count }}</th>
               <td>{{ post.p_title }}</td>
               <td>{{ post.p_content[:70] }}...</td>
               <td><a href="/edit/{{ post.p_slug }}"><button type="button" class="btn btn-outline-primary">Edit</button></a>
@@ -102,12 +103,26 @@
                 </div>
               </div>
             </div>
+            {% set count = count + 1 %}
             {% endfor %}
           </tbody>
         </table>
       </div>
       <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-        Your profile details here.
+        <div class="jumbotron">
+          <p class="lead" style="float: right;">
+            <a class="btn btn-primary" href="#" role="button">Edit</a>
+          </p>
+          <h3 class="display-6">Your details</h3>
+          <hr class="my-4">
+          <label>First name : {{ user[0].f_name }} </label><br>
+          <label>Last name : {{ user[0].l_name }} </label><br>
+          <label>Email address : {{ user[0].email }} </label><br>
+          <label>Phone number : {{ user[0].phone }} </label><br>
+          <label>Password : {{ user[0].password }} </label><br>
+          <label>Date of birth : {{ user[0].dob }} </label><br>
+          
+        </div>
       </div>
     </div>
     

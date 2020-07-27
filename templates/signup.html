@@ -2,24 +2,40 @@
 
 {% block body %}
 <div class="container-sm">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class=flashes>
+      {% for category, message in messages %}
+      <div id="flash" class="alert alert-{{ category }}" role="alert" style="text-align: center;">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
         <div class="row justify-content-md-center">
-            <form class="border border-light p-5" action="/signup" method="POST" style="background-color: #F8F9FA">
+            <form name="signup-form" class="border border-light p-5" action="/signup" method="POST" style="background-color: #F8F9FA">
 
               <p class="h4 mb-4 text-center">Sign up</p>
                 <label for="fname">First name</label>
-                <input type="text" id="fname" maxlength="20" name="fname" class="form-control mb-4" placeholder="First name" required>
+                <input type="text" id="fname" maxlength="20" name="fname" class="form-control mb-4" placeholder="First name" value="{% if flag %}
+                                                                                                                                      {{ a[0] }}
+                                                                                                                                    {% endif %}" required>
 
                 <label for="lname">Last name</label>
-                <input type="text" id="lname" maxlength="20" name="lname" class="form-control mb-4" placeholder="Last name" required>
-
-                <label for="uid">User id</label>
-                <input type="text" id="uid" maxlength="15" name="uid" class="form-control mb-4" placeholder="User id" required>
+                <input type="text" id="lname" maxlength="20" name="lname" class="form-control mb-4" placeholder="Last name" value="{% if flag %}
+                                                                                                                                      {{ a[1] }}
+                                                                                                                                    {% endif %}"  required>
 
                 <label for="dob">Date of birth</label>
-                <input type="date" name="dob" id="dob" required><br><br>
+                <input type="date" name="dob" id="dob" value="{% if flag %}
+                                                                {{ a[5] }}
+                                                              {% endif %}"  required><br><br>
 
                 <label for="phone">Mobile number</label>
-                <input type="number" name="phone" required pattern="[6789][0-9]{9}" id="phone" class="form-control mb-4" placeholder="Mobile number" maxlength="10" size="10">
+                <input type="number" name="phone" required pattern="[6789][0-9]{9}" id="phone" class="form-control mb-4" placeholder="Mobile number" value="{% if flag %}
+                                                                                                                                                              {{ a[3] }}
+                                                                                                                                                            {% endif %}"  maxlength="10" size="10">
 
                 <label for="email">Email address</label>
                 <input type="email" name="email" maxlength="50" id="email" required class="form-control mb-4" placeholder="Email address" size="40">
@@ -34,6 +50,12 @@
         </div>
 </div>
 <script>
-
+    window.setTimeout(function() 
+        {
+            $(".alert").fadeTo(500, 0).slideUp(500, function()
+            {
+                $(this).remove(); 
+            });
+        }, 2000);
 </script>
 {% endblock body %}

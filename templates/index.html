@@ -6,28 +6,24 @@
       <div class="col-md-8">
 
         <h1 class="my-4">Blogs</h1>
-        {% for post in posts %}
-        <!-- Blog Post -->
-        {% if post %}
-        <div class="card mb-4">
-          <img class="card-img-top" src="#" alt="Card image cap">
-          <div class="card-body">
-            <p>{{ image }}</p>
-            <h2 class="card-title">{{ post.p_title }}</h2>
-            <p class="card-text">{{ post.p_content[:100]}}.....</p>
-            <a href="/post/{{ post.p_slug }}" class="btn btn-primary">Read More &rarr;</a>
-          </div>
-          <div class="card-footer text-muted">
-            Posted on {{ post.p_date }} by
-            <a href="">{{ post.p_by }}</a>
-          </div>
-        </div>
-        {% else %}
-            No posts
-        {% endif %}
-        {% endfor %}
-
-        <!-- Pagination -->
+        {% if posts|length > 0 %}
+          {% for post in posts %}
+            <!-- Blog Post -->
+            <div class="card mb-4">
+              <img class="card-img-top" src="#" alt="Card image cap">
+              <div class="card-body">
+                <p>{{ image }}</p>
+                <h2 class="card-title">{{ post.p_title }}</h2>
+                <p class="card-text">{{ post.p_content[:100]}}.....</p>
+                <a href="/post/{{ post.p_slug }}" class="btn btn-primary">Read More &rarr;</a>
+              </div>
+              <div class="card-footer text-muted">
+                Posted on {{ post.p_date }} by
+                <a href="">{{ post.p_by }}</a>
+              </div>
+            </div>
+          {% endfor %}
+          <!-- Pagination -->
         <ul class="pagination justify-content-center mb-4">
           <li class="page-item">
             <a class="page-link" href="#">&larr; Older</a>
@@ -36,6 +32,11 @@
             <a class="page-link" href="#">Newer &rarr;</a>
           </li>
         </ul>
+        {% else %}
+            <h4>No posts available....</h4>
+        {% endif %}
+        
+        
 
       </div>
 

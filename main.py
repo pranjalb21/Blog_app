@@ -23,6 +23,7 @@ class Post(db.Model):
     p_image = db.Column(db.String)
     p_content = db.Column(db.String)
     p_by = db.Column(db.String)
+    p_email = db.Column(db.String(50))
     p_date = db.Column(db.String)
     p_time = db.Column(db.String)
 
@@ -33,7 +34,6 @@ class User(db.Model):
     l_name = db.Column(db.String(20))
     email = db.Column(db.String(50))
     phone = db.Column(db.String(10))
-    u_name = db.Column(db.String(15))
     password = db.Column(db.String(15))
     dob = db.Column(db.String)
 
@@ -55,29 +55,29 @@ def home():
 
 @app.route('/signup', methods = ['GET', 'POST'])
 def signup():
-    if request.method == 'POST':
-        fname = request.form.get('fname')
-        lname = request.form.get('lname')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        u_name = request.form.get('uid')
-        pas = request.form.get('pass')
-        dob = request.form.get('dob')
-        if User.query.filter_by(u_name = u_name).first():
-            flash('User name is already registered please sign in','warning')
-            return redirect('/dashboard')
-        if User.query.filter_by(email = email).first():
-            flash('This email is already registered please sign in','warning')
-            return redirect('/dashboard')
-        if User.query.filter_by(phone = phone).first():
-            flash('This phone is already registered please sign in','warning')
-            return redirect('/dashboard')
-        entry = User(f_name = fname, l_name = lname, email = email, phone = phone, u_name = u_name, password = pas, dob = dob)
-        db.session.add(entry)
-        db.session.commit()
-        flash('You registration has been completes. Please sign in', 'success')
-        return render_template("login.html")
-    return render_template("signup.html")
+    if 'user' not in session:
+        flag = False
+        if request.method == 'POST':
+            a = []
+            a.append(request.form.get('fname'))
+            a.append(request.form.get('lname'))
+            a.append(request.form.get('email').lower())
+            a.append(request.form.get('phone'))
+            a.append(request.form.get('pass'))
+            a.append(request.form.get('dob'))
+            u = User.query.filter_by(email = a[2]).first()
+            if u:
+                flash("Email address already registered. Please use a different email address or log in", 'warning')
+                return render_template("signup.html",flag = True, arr = a)
+            
+            entry = User(f_name = a[0], l_name = a[1], email = a[2], phone = a[3], password = a[4], dob = a[5])
+            db.session.add(entry)
+            db.session.commit()
+            flash('You registration has been completes. Please sign in', 'success')
+            return render_template("login.html")
+        return render_template("signup.html")
+    else:
+        return redirect("/dashboard")
 
 
 @app.route("/about")
@@ -87,81 +87,105 @@ def about():
 
 @app.route('/new_post', methods = ['GET', 'POST'])
 def post_new():
-    if request.method == 'POST':
-        post_title = request.form.get('title')
-        post_slug = slug_maker(post_title)
-        post_image = ""
-        post_content = request.form.get('content')
-        post_by = session['user'].capitalize()
-        post_date = datetime.date.today()
-        post_time = get_time(datetime.datetime.now())
-        entry = Post(p_slug = post_slug, p_title = post_title, p_image = post_image, p_content = post_content, p_by = post_by, p_date = post_date, p_time = post_time)
-        db.session.add(entry)
-        db.session.commit()
-        flash("Your post has been published", "success")
-        return redirect("/dashboard")
-    return render_template("new_post.html")
+    if 'user' in session:
+        if request.method == 'POST':
+            post_user = User.query.filter_by(email = session['user']).first()
+            post_title = request.form.get('title')
+            post_slug = slug_maker(post_title)
+            post_image = ""
+            post_content = request.form.get('content')
+            post_by = post_user.f_name.capitalize()
+            post_email = session['user']
+            post_date = datetime.date.today()
+            post_time = get_time(datetime.datetime.now())
+            entry = Post(p_slug = post_slug, p_title = post_title, p_image = post_image, p_content = post_content, p_by = post_by, p_email = post_email, p_date = post_date, p_time = post_time)
+            db.session.add(entry)
+            db.session.commit()
+            flash("Your post has been published", "success")
+            return redirect("/dashboard")
+        return render_template("new_post.html")
+    else:
+        return redirect('/dashboard')
     
 
 @app.route("/update/<string:slug>", methods = ['GET','POST'])
 def update(slug):
-    if request.method == 'POST':
-        post = Post.query.filter_by(p_slug = slug).first()
-        post.p_slug = slug_maker(request.form.get('title'))
-        post.p_title = request.form.get('title')
-        post.p_image = post.p_image
-        post.p_content = request.form.get('content')
-        post.p_by = post.p_by
-        post.p_date = post.p_date
-        post.p_time = post.p_time
-        db.session.commit()
-        flash("Your post has been updated", "success")
-        return redirect("/dashboard")
-    return redirect('/dashboard')
+    if 'user' in session:
+        if request.method == 'POST':
+            post = Post.query.filter_by(p_slug = slug).first()
+            post.p_slug = slug_maker(request.form.get('title'))
+            post.p_title = request.form.get('title')
+            post.p_image = post.p_image
+            post.p_content = request.form.get('content')
+            post.p_by = post.p_by
+            post.p_date = post.p_date
+            post.p_time = post.p_time
+            db.session.commit()
+            flash("Your post has been updated", "success")
+            return redirect("/dashboard")
+        return redirect('/dashboard')
+    else:
+        return redirect('/dashboard')
         
 
 @app.route("/edit/<string:slug>")
 def edit(slug):
-    post = Post.query.filter_by(p_slug = slug).first()
-    return render_template("edit.html", post = post)
+    if 'user' in session:
+        post = Post.query.filter_by(p_slug = slug).first()
+        return render_template("edit.html", post = post)
+    else:
+        return redirect("/dashboard")
 
 
 @app.route("/post/<string:slug>")
 def post_content(slug):
-    if not slug == "": 
-        post = Post.query.filter_by(p_slug = slug).first()
-        return render_template("post.html", post = post)
+    if 'user' in session:
+        if not slug == "": 
+            post = Post.query.filter_by(p_slug = slug).first()
+            return render_template("post.html", post = post)
+        else:
+            return redirect("/")
     else:
-        return redirect("/")
+        return redirect("/dashboard")
 
 
 @app.route("/logout")
 def logout():
-    session.pop('user')
-    return redirect("/dashboard")
+    if 'user' in session:
+        session.pop('user')
+        return redirect("/dashboard")
+    else:
+        return redirect("/dashboard")
 
 
 @app.route('/delete/<string:slug>')
 def delete(slug):
-    post = Post.query.filter_by(p_slug = slug).first()
-    db.session.delete(post)
-    db.session.commit()
-    flash('The post has been deleted', 'danger')
-    return redirect("/dashboard")
+    if 'user' in session:
+        post = Post.query.filter_by(p_slug = slug).first()
+        db.session.delete(post)
+        db.session.commit()
+        flash('The post has been deleted', 'danger')
+        return redirect("/dashboard")
+    else:
+        return redirect("/dashboard")
 
 
 @app.route("/dashboard", methods = ['GET', 'POST'])
 def dashboard():
     flag = False
-    posts = Post.query.filter_by().all()
-    if 'user' in session and session['user'] == 'pranjal':
-        return render_template('dashboard.html', flag = False, posts = posts)
+    if 'user' in session:
+        posts = Post.query.filter_by(p_email = session['user'])
+        user = User.query.filter_by(email = session['user'])
+        return render_template('dashboard.html', flag = False, posts = posts, user = user)
     if request.method == 'POST':
-        username = request.form.get('username')
+        email = request.form.get('email').lower()
         password = request.form.get('password')
-        if username == "pranjal" and password == "pranjal":
-            session['user'] = username
-            return render_template('dashboard.html', flag = True, posts = posts)
+        user_fetch = User.query.filter_by(email = email).first() 
+        if user_fetch and password == user_fetch.password:
+            session['user'] = email
+            posts = Post.query.filter_by(p_email = email)
+            user = User.query.filter_by(email = email)
+            return render_template('dashboard.html', flag = True, posts = posts, user = user)
         else:
             flash("Please enter a correct username or password", "warning")
             return redirect('/dashboard')
