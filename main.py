@@ -85,7 +85,7 @@ def signup():
             u = User.query.filter_by(email = a[2]).first()
             if u:
                 flash("Email address already registered. Please use a different email address or log in", 'warning')
-                return render_template("signup.html",flag = True, arr = a)
+                return render_template("signup.html",flag = True, a = a)
             
             entry = User(f_name = a[0], l_name = a[1], email = a[2], phone = a[3], password = a[4], dob = a[5])
             db.session.add(entry)
