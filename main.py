@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect,flash, url_for,session
 from flask_sqlalchemy import SQLAlchemy
-import datetime
+import datetime, math
 
 
 app = Flask(__name__)
@@ -20,7 +20,6 @@ class Post(db.Model):
     p_no = db.Column(db.Integer, primary_key = True)
     p_slug = db.Column(db.String(59))
     p_title = db.Column(db.String(50))
-    p_image = db.Column(db.String)
     p_content = db.Column(db.String)
     p_by = db.Column(db.String)
     p_email = db.Column(db.String(50))
@@ -50,7 +49,25 @@ def get_time(today):
 @app.route("/")
 def home():
     posts = Post.query.filter_by().all()
-    return render_template("index.html", posts = posts)
+    last = math.ceil(len(posts)/4)
+    page = request.args.get('page')
+    if not str(page).isdigit():
+        page = 1
+    page = int (page)
+    posts = posts[( page - 1 ) * 4 : (( page - 1 ) * 4) + 4]
+    if page == 1:
+        p = "#"
+        if page == last :
+            n = "#"
+        else:
+            n = "/?page=" + str(page+1)
+    elif page == last:
+        p = "/?page=" + str(page-1)
+        n = "#"
+    else:
+        p = "/?page=" + str(page-1)
+        n = "/?page=" + str(page+1)
+    return render_template("index.html", posts = posts, old = p, new = n)
 
 
 @app.route('/signup', methods = ['GET', 'POST'])
@@ -92,13 +109,12 @@ def post_new():
             post_user = User.query.filter_by(email = session['user']).first()
             post_title = request.form.get('title')
             post_slug = slug_maker(post_title)
-            post_image = ""
             post_content = request.form.get('content')
             post_by = post_user.f_name.capitalize()
             post_email = session['user']
             post_date = datetime.date.today()
             post_time = get_time(datetime.datetime.now())
-            entry = Post(p_slug = post_slug, p_title = post_title, p_image = post_image, p_content = post_content, p_by = post_by, p_email = post_email, p_date = post_date, p_time = post_time)
+            entry = Post(p_slug = post_slug, p_title = post_title, p_content = post_content, p_by = post_by, p_email = post_email, p_date = post_date, p_time = post_time)
             db.session.add(entry)
             db.session.commit()
             flash("Your post has been published", "success")
@@ -110,7 +126,8 @@ def post_new():
 
 @app.route("/update/<string:slug>", methods = ['GET','POST'])
 def update(slug):
-    if 'user' in session:
+    user_fetch = Post.query.filter_by(p_slug = slug).first().p_email
+    if 'user' in session and session['user'] == user_fetch:
         if request.method == 'POST':
             post = Post.query.filter_by(p_slug = slug).first()
             post.p_slug = slug_maker(request.form.get('title'))
@@ -125,12 +142,14 @@ def update(slug):
             return redirect("/dashboard")
         return redirect('/dashboard')
     else:
+        flash = ("That's not your post", "danger")
         return redirect('/dashboard')
         
 
 @app.route("/edit/<string:slug>")
 def edit(slug):
-    if 'user' in session:
+    user_fetch = Post.query.filter_by(p_slug = slug).first().p_email
+    if 'user' in session and session['user'] == user_fetch:
         post = Post.query.filter_by(p_slug = slug).first()
         return render_template("edit.html", post = post)
     else:
@@ -139,14 +158,11 @@ def edit(slug):
 
 @app.route("/post/<string:slug>")
 def post_content(slug):
-    if 'user' in session:
-        if not slug == "": 
-            post = Post.query.filter_by(p_slug = slug).first()
-            return render_template("post.html", post = post)
-        else:
-            return redirect("/")
+    if not slug == "": 
+        post = Post.query.filter_by(p_slug = slug).first()
+        return render_template("post.html", post = post)
     else:
-        return redirect("/dashboard")
+        return redirect("/")
 
 
 @app.route("/logout")
@@ -160,13 +176,15 @@ def logout():
 
 @app.route('/delete/<string:slug>')
 def delete(slug):
-    if 'user' in session:
+    user_fetch = Post.query.filter_by(p_slug = slug).first().p_email
+    if 'user' in session and session['user'] == user_fetch:
         post = Post.query.filter_by(p_slug = slug).first()
         db.session.delete(post)
         db.session.commit()
         flash('The post has been deleted', 'danger')
         return redirect("/dashboard")
     else:
+        flash = ("That's not your post", "danger")
         return redirect("/dashboard")
 
 
@@ -206,5 +224,5 @@ def contact():
         flash("Your message has been submitted successfully", "success")
         return redirect("/contact")
     return render_template("contact.html", message = message)
-
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)
