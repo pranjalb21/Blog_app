@@ -1,9 +1,56 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<div class="container-sm">
-    <div class="row justify-content-md-center">
-        <h1 class="my-4">I created this website</h1>
+<div class="container" style="margin-top: 50px;">
+    <div class="row">
+      <div class="col-xl">
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container" style="text-align: center;">
+                <h1 class="display-4">About</h1><hr>
+                <p class="lead">
+                    This website is created for travelling enthusiastics.<br>
+                    Travellors can post blogs on their expeiences while travelling or anything about travel.
+                </p>
+            </div>
+        </div>
+      </div>
+      
+      <!--<div class="col-lg">
+        <div class="col-sm">
+            <p>This website is built by</p>
+        </div>
+        <div class="card" style="width: 15rem;">
+            <img class="card-img-top" src="{{ url_for('static', filename = 'New-2.jpg')}}" alt="Card image cap" width="50px" height="250px">
+            <div class="card-body">
+            <h5 class="card-title">Pranjal Gain</h5>
+            <p class="card-text">Web Developer</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+      </div>-->
     </div>
-</div>
+  </div>
+<!--<div class="container-sm" style="margin-top: 50px;">
+    <div class="row justify-content-md-center">
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">About</h1>
+                <p class="lead">
+                    This website is created for travelling enthusiastics.<br>
+                    Travellors can post blogs on their expeiences while travelling.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="{{ url_for('static', filename = 'New-2.jpg')}}" alt="Card image cap">
+            <div class="card-body">
+            <h5 class="card-title">Pranjal Gain</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    </div>
+</div>-->
 {% endblock body %}

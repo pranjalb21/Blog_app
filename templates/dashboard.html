@@ -65,17 +65,14 @@
         <table class="table" style="margin-top: 0px;">
           <thead class="thead-dark">
             <tr>
-              <th scope="col">Serial no.</th>
               <th scope="col">Post title</th>
               <th scope="col">Post content</th>
               <th scope="col">Operations</th>
             </tr>
           </thead>
           <tbody>
-            {% set count = 1 %}
             {% for post in posts %}
             <tr>
-              <th scope="row">{{ count }}</th>
               <td>{{ post.p_title }}</td>
               <td>{{ post.p_content[:70] }}...</td>
               <td><a href="/edit/{{ post.p_slug }}"><button type="button" class="btn btn-outline-primary">Edit</button></a>
@@ -103,7 +100,7 @@
                 </div>
               </div>
             </div>
-            {% set count = count + 1 %}
+            
             {% endfor %}
           </tbody>
         </table>
