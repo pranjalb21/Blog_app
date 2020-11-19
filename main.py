@@ -49,6 +49,7 @@ def get_time(today):
 @app.route("/")
 def home():
     posts = Post.query.filter_by().all()
+    posts = posts[::-1]
     last = math.ceil(len(posts)/4)
     page = request.args.get('page')
     if not str(page).isdigit():
